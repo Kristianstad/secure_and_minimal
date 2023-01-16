@@ -43,5 +43,5 @@ jobs:
         with:
           context: ./${{ env.CONTEXT }}
           push: true
-          tags: ${{ env.REGISTRY }}/${{ steps.repo.outputs.lowercase }}:${{ github.ref_name }}-${{ env.CONTEXT }}
+          tags: ${{ env.REGISTRY }}/${{ steps.repo.outputs.lowercase }}:${{ env.CONTEXT }}-${{ github.ref_name }}
           labels: ${{ steps.meta.outputs.labels }}
