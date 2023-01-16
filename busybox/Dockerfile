@@ -1,4 +1,5 @@
 ARG SaM_IMAGE="busybox"
+ARG Sam_REPO="ghcr.io/kristianstad/secure_and_minimal"
 ARG ALPINE_VERSION="3.17"
 
 FROM huggla/secure_and_minimal:alpine-$ALPINE_VERSION as alpine
