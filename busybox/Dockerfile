@@ -1,8 +1,8 @@
 ARG SaM_IMAGE="busybox"
-ARG Sam_REPO="ghcr.io/kristianstad/secure_and_minimal"
-ARG ALPINE_VERSION="3.17"
+ARG SaM_REPO="ghcr.io/kristianstad/secure_and_minimal"
+ARG ALPINE_VERSION="${{ github.ref_name }}"
 
-FROM huggla/secure_and_minimal:alpine-$ALPINE_VERSION as alpine
+FROM $SaM_REPO:alpine-$ALPINE_VERSION as alpine
 
 RUN exec 2>&1 \
  && set -x \
