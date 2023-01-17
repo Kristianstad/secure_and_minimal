@@ -9,6 +9,8 @@ ARG IMAGETYPE="SaM"
 
 FROM $SaM_REPO:alpine-$ALPINE_VERSION as image
 
+ARG SaM_REPO
+ARG ALPINE_VERSION
 ARG BASEIMAGE="$SaM_REPO:busybox-$ALPINE_VERSION"
 ARG RUNDEPS="sudo dash argon2 libcap"
 ARG MAKEFILES="/etc/sudoers.d/docker1 /etc/sudoers.d/docker2"
@@ -37,13 +39,13 @@ ARG FINALCMDS=\
 "&& chmod u=rwx,g=rx ./stop/stage1"
 # ARGs (can be passed to Build/Final) </END>
 
+# Generic template (don't edit) <BEGIN>
 FROM ${CONTENTIMAGE1:-scratch} as content1
 FROM ${CONTENTIMAGE2:-scratch} as content2
 FROM ${CONTENTIMAGE3:-scratch} as content3
 FROM ${CONTENTIMAGE4:-scratch} as content4
 FROM ${CONTENTIMAGE5:-scratch} as content5
-ARG BASEIMAGE
-FROM ${BASEIMAGE} as base
+FROM ${BASEIMAGE:-$SaM_REPO:base-$ALPINE_VERSION} as base
 FROM ${INITIMAGE:-scratch} as init
 # Generic template (don't edit) </END>
 
@@ -52,8 +54,7 @@ FROM ${INITIMAGE:-scratch} as init
 # =========================================================================
 # Generic template (don't edit) <BEGIN>
 FROM ${BUILDIMAGE:-$SaM_REPO:build-$ALPINE_VERSION} as build
-ARG BASEIMAGE
-FROM ${BASEIMAGE} as final
+FROM ${BASEIMAGE:-$SaM_REPO:base-$ALPINE_VERSION} as final
 COPY --from=build /finalfs /
 # Generic template (don't edit) </END>
 
