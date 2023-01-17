@@ -45,3 +45,5 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{ steps.repo.outputs.lowercase }}:${{ env.CONTEXT }}-${{ github.ref_name }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            ALPINE_VERSION=${{ github.ref_name }}
