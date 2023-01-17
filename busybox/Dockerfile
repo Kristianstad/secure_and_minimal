@@ -1,6 +1,6 @@
 ARG SaM_IMAGE="busybox"
 ARG SaM_REPO="ghcr.io/kristianstad/secure_and_minimal"
-ARG ALPINE_VERSION="master"
+ARG ALPINE_VERSION="$GITHUB_REF_NAME"
 
 FROM $SaM_REPO:alpine-$ALPINE_VERSION as alpine
 
