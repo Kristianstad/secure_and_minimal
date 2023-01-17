@@ -46,4 +46,5 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ steps.repo.outputs.lowercase }}:${{ env.CONTEXT }}-${{ github.ref_name }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            SaM_REPO=${{ env.REGISTRY }}/${{ steps.repo.outputs.lowercase }},ALPINE_VERSION=${{ github.ref_name }}
+            SaM_REPO=${{ env.REGISTRY }}/${{ steps.repo.outputs.lowercase }}
+            ALPINE_VERSION=${{ github.ref_name }}
