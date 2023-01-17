@@ -37,8 +37,6 @@ ARG FINALCMDS=\
 "&& chmod u=rwx,g=rx ./stop/stage1"
 # ARGs (can be passed to Build/Final) </END>
 
-# Generic template (don't edit) <BEGIN>
-ENV BASEIMAGE=${BASEIMAGE:-$SaM_REPO:base-$ALPINE_VERSION}
 FROM ${CONTENTIMAGE1:-scratch} as content1
 FROM ${CONTENTIMAGE2:-scratch} as content2
 FROM ${CONTENTIMAGE3:-scratch} as content3
