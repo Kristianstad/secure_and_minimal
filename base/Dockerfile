@@ -1,15 +1,15 @@
-# Secure and Minimal
-# https://hub.docker.com/repository/docker/huggla/secure_and_minimal
-
-ARG SaM_IMAGE="base"
-ARG SaM_VERSION="dev"
+ARG SaM_REPO
+ARG ALPINE_VERSION
 
 # =========================================================================
 # Init
 # =========================================================================
 # ARGs (can be passed to Build/Final) <BEGIN>
 ARG IMAGETYPE="SaM"
-ARG BASEIMAGE="huggla/secure_and_minimal:$SaM_VERSION-busybox"
+
+FROM $SaM_REPO:alpine-$ALPINE_VERSION as image
+
+ARG BASEIMAGE="$SaM_REPO:busybox-$ALPINE_VERSION"
 ARG RUNDEPS="sudo dash argon2 libcap"
 ARG MAKEFILES="/etc/sudoers.d/docker1 /etc/sudoers.d/docker2"
 ARG REMOVEFILES="/usr/sbin/visudo /usr/bin/sudoreplay /usr/bin/cvtsudoers /usr/bin/sudoedit"
@@ -43,7 +43,7 @@ FROM ${CONTENTIMAGE2:-scratch} as content2
 FROM ${CONTENTIMAGE3:-scratch} as content3
 FROM ${CONTENTIMAGE4:-scratch} as content4
 FROM ${CONTENTIMAGE5:-scratch} as content5
-FROM ${BASEIMAGE:-huggla/secure_and_minimal:$SaM_VERSION-base} as base
+FROM ${BASEIMAGE:-$SaM_REPO:base-$ALPINE_VERSION} as base
 FROM ${INITIMAGE:-scratch} as init
 # Generic template (don't edit) </END>
 
@@ -51,8 +51,8 @@ FROM ${INITIMAGE:-scratch} as init
 # Build
 # =========================================================================
 # Generic template (don't edit) <BEGIN>
-FROM ${BUILDIMAGE:-huggla/secure_and_minimal:$SaM_VERSION-build} as build
-FROM ${BASEIMAGE:-huggla/secure_and_minimal:$SaM_VERSION-base} as final
+FROM ${BUILDIMAGE:-$SaM_REPO:build-$ALPINE_VERSION} as build
+FROM ${BASEIMAGE:-$SaM_REPO:base-$ALPINE_VERSION} as final
 COPY --from=build /finalfs /
 # Generic template (don't edit) </END>
 
