@@ -1,5 +1,4 @@
-ARG SaM_IMAGE="busybox"
-ARG SaM_REPO="ghcr.io/kristianstad/secure_and_minimal"
+ARG SaM_REPO
 ARG ALPINE_VERSION
 
 FROM $SaM_REPO:alpine-$ALPINE_VERSION as alpine
