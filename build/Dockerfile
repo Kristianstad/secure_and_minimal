@@ -1,10 +1,7 @@
-# Secure and Minimal
-# https://hub.docker.com/repository/docker/huggla/secure_and_minimal
+ARG SaM_REPO
+ARG ALPINE_VERSION
 
-ARG SaM_IMAGE="build"
-ARG SaM_VERSION="dev"
-
-FROM huggla/secure_and_minimal:$SaM_VERSION-alpine as image
+FROM $SaM_REPO:alpine-$ALPINE_VERSION as image
 COPY ./rootfs /
 RUN exec 2>&1 \
  && set -x \
