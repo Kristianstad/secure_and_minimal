@@ -1,10 +1,9 @@
-ARG SaM_REPO=${SaM_REPO:-ghcr.io/kristianstad/secure_and_minimal}
-ARG ALPINE_VERSION=${ALPINE_VERSION:-3.17}
-
 # =========================================================================
 # Init
 # =========================================================================
 # ARGs (can be passed to Build/Final) <BEGIN>
+ARG SaM_REPO=${SaM_REPO:-ghcr.io/kristianstad/secure_and_minimal}
+ARG ALPINE_VERSION=${ALPINE_VERSION:-3.17}
 ARG IMAGETYPE="SaM"
 ARG BASEIMAGE="$SaM_REPO:busybox-$ALPINE_VERSION"
 ARG RUNDEPS="sudo dash argon2 libcap"
