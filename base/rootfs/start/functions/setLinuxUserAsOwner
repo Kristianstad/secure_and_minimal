@@ -12,6 +12,6 @@ setLinuxUserAsOwner(){
    while read dir
    do
       set +f
-      find "$dir" -user 0 -exec chown 102 "{}" +
+      find "$dir" -exec chown 102 "{}" +
    done </environment/linuxuserownedrecursive
 }
