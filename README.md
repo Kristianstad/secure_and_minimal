@@ -313,7 +313,7 @@ The name of the user executing VAR_FINAL_COMMAND. Can be set to root but should 
 Shell command executed by VAR_LINUX_USER at the end of the startup process. Files that should be executed must be included in the EXECUTABLES or STARTUPEXECUTABLES ARG of the image or its BASEIMAGE.
 
 ### VAR_INIT_CAPS
-Additional capabilities, besides setpcap, setgid and setuid, that is needed during the startup process. Capabilities listed in VAR_KEEP_CAPS doesn't need to be listed in VAR_INIT_CAPS too.
+Additional capabilities, besides chown, setpcap, setgid and setuid, that is needed during the startup process. Capabilities listed in VAR_KEEP_CAPS doesn't need to be listed in VAR_INIT_CAPS too.
 
 ### VAR_KEEP_CAPS
 Capabilities needed by VAR_FINAL_COMMAND.
