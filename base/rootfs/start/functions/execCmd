@@ -15,11 +15,7 @@ execCmd(){
             then
                ln -s /usr/local/bin/dash /bin/bash
             fi
-            keepCaps="cap_setpcap,cap_setgid,cap_setuid"
-            if [ -s "/environment/linuxuserowned" ] || [ -s "/environment/linuxuserownedrecursive" ]
-            then
-               keepCaps="$keepCaps,cap_chown"
-            fi
+            keepCaps="cap_setpcap,cap_setgid,cap_setuid,cap_chown"
             if [ -n "$VAR_INIT_CAPS" ]
             then
                keepCaps="$keepCaps,$VAR_INIT_CAPS"
