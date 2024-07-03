@@ -1,5 +1,5 @@
 ARG SaM_REPO=${SaM_REPO:-ghcr.io/kristianstad/secure_and_minimal}
-ARG ALPINE_VERSION=${ALPINE_VERSION:-3.19}
+ARG ALPINE_VERSION=${ALPINE_VERSION:-3.20}
 
 FROM $SaM_REPO:alpine-$ALPINE_VERSION as image
 COPY ./rootfs /
