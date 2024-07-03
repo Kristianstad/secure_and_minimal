@@ -1,5 +1,5 @@
 # Secure and Minimal (SaM)
-A simple framework for creating minimal and secure Docker images based on Alpine. It consist of a Dockerfile-template, a number of standardized constants, a few helper-images, and structured shell scripts.
+A simple framework for creating minimal and secure Docker images based on Alpine. It consist of a Dockerfile-template, a number of standardized constants, a few helper-images, and structured shell scripts. Note! Use buildkit v0.12.5, newer versions of buildkit currently fails.
 
 # The Dockerfile-template
 The Dockerfile-template is divided into three main blocks: Init, Build, and Final. All three main blocks contain sub-blocks with generic code that must remain untouched for the framework to work properly.
