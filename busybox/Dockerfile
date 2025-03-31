@@ -21,7 +21,8 @@ RUN exec 2>&1 \
  && >/finalfs/environment/linuxuserownedrecursive \
  && echo "musl" > /finalfs/etc/apk/world \
  && echo "busybox" >> /finalfs/etc/apk/world \
- && cp -a /lib/libz.so* /lib/*musl* /finalfs/lib/ \
+ && cp -a /usr/lib/libz.so* /finalfs/usr/lib/ \
+ && cp -a /lib/*musl* /finalfs/lib/ \
  && cp -a /bin/busybox /bin/sh /finalfs/bin/ \
  && cp -a $(find /bin/* -type l | xargs) /finalfs/bin/ \
  && cp -a $(find /sbin/* -type l | xargs) /finalfs/sbin/ \
