@@ -1,7 +1,7 @@
 name: Create and publish alpine image
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:          # Fortfarande manuell trigger
     inputs:
       alpine_version:
         description: 'Alpine version (lämna tomt för att använda branch-namn)'
@@ -62,14 +62,3 @@ jobs:
             ALPINE_VERSION=${{ steps.version.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      # === NYTT STEG: Visa bildstorlek ===
-      - name: Show built image size
-        run: |
-          echo "=== Final Docker image size ==="
-          docker images --format "table {{.Repository}}:{{.Tag}}\t{{.Size}}\t{{.ID}}" | grep -E "(secure_and_minimal|${{ github.repository }})" || true
-          
-          echo ""
-          echo "=== Detailed size information ==="
-          IMAGE_TAG="${{ env.REGISTRY }}/${{ github.repository }}:${{ steps.version.outputs.version }}"
-          docker images --format "{{.Size}}" $IMAGE_TAG || echo "Could not find local image"
