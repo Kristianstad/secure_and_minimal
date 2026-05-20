@@ -2,14 +2,11 @@ ARG ALPINE_VERSION=${ALPINE_VERSION:-3.23}
 
 FROM alpine:$ALPINE_VERSION as alpine
 
-RUN exec 2>&1 \
- && set -x \
- && echo "alpine-base" > /etc/apk/world \
- && apk --no-cache --purge --force-overwrite --force-refresh fix -d -r -u -x --directory-permissions alpine-base \
+RUN apk add --no-cache --initdb alpine-base \
  && mkdir -p /finalfs/etc/apk \
  && cp -a /etc/resolv.conf /finalfs/etc/ \
  && cp -a /etc/apk/repositories /finalfs/etc/apk/ \
- && apk --no-cache --root /finalfs --keys-dir /etc/apk/keys --initramfs-diskless-boot --clean-protected add --initdb alpine-base
+ && apk --no-cache --root /finalfs --initdb add alpine-base
 
 FROM scratch
 
