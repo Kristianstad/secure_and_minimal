@@ -1,6 +1,6 @@
 ARG ALPINE_VERSION=${ALPINE_VERSION:-3.23}
 
-FROM alpine:$ALPINE_VERSION as alpine
+FROM alpine:${ALPINE_VERSION} AS alpine
 
 # =============================================
 # Alternativ 1: Rekommenderad (mer robust)
