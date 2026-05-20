@@ -41,6 +41,9 @@ RUN exec 2>&1 \
 
 FROM scratch
 
+# Re-deklarera ARG så den blir tillgänglig i detta stage
+ARG ALPINE_VERSION
+
 # Metadata
 LABEL org.opencontainers.image.title="secure_and_minimal" \
       org.opencontainers.image.description="Framework for creating minimal and secure Docker images based on Alpine." \
