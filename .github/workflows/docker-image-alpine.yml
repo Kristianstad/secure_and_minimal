@@ -56,7 +56,7 @@ jobs:
         with:
           context: ./${{ env.CONTEXT }}
           push: true
-          load: true                  # <-- VIKTIGT NYTT
+          load: true                    # Laddar bilden lokalt
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
@@ -64,7 +64,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # === Bildstorlek + GitHub Summary ===
+      # === Bildstorlek + GitHub Summary (förbättrad) ===
       - name: Show built image size + Summary
         run: |
           echo "## 🐳 Docker Image Build Summary" >> $GITHUB_STEP_SUMMARY
@@ -73,22 +73,27 @@ jobs:
           echo "**Image:** \`${{ env.REGISTRY }}/${{ github.repository }}:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          echo "### 📏 Image Size" >> $GITHUB_STEP_SUMMARY
-
           IMAGE_NAME="${{ env.REGISTRY }}/${{ github.repository }}:${{ steps.version.outputs.version }}"
 
-          # Hämta storlek
-          SIZE=$(docker images --format "{{.Size}}" "$IMAGE_NAME" 2>/dev/null || echo "N/A")
-          echo "- **Size (uncompressed):** ${SIZE}" >> $GITHUB_STEP_SUMMARY
+          echo "### 📏 Image Size" >> $GITHUB_STEP_SUMMARY
 
-          echo "- **Digest:** $(docker inspect --format='{{index .RepoDigests 0}}' "$IMAGE_NAME" 2>/dev/null | cut -d@ -f2 || echo 'N/A')" >> $GITHUB_STEP_SUMMARY
+          # Försök flera sätt att hämta storlek
+          if docker image inspect "$IMAGE_NAME" > /dev/null 2>&1; then
+            SIZE=$(docker images --format "{{.Size}}" "$IMAGE_NAME")
+            echo "- **Size (uncompressed):** ${SIZE}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Digest:** $(docker inspect --format='{{index .RepoDigests 0}}' "$IMAGE_NAME" 2>/dev/null | cut -d@ -f2 || echo 'N/A')" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **Size (uncompressed):** Could not detect locally" >> $GITHUB_STEP_SUMMARY
+            echo "- **Note:** Image pushed but not loaded locally" >> $GITHUB_STEP_SUMMARY
+          fi
 
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📦 Installed packages" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
-          docker run --rm "$IMAGE_NAME" apk info -v 2>/dev/null | head -n 35 >> $GITHUB_STEP_SUMMARY || echo "Kunde inte lista paket" >> $GITHUB_STEP_SUMMARY
+          
+          # Hämta paket via docker run (funkar även om bilden inte är "local" perfekt)
+          docker run --rm "$IMAGE_NAME" apk info -v 2>/dev/null | head -n 35 >> $GITHUB_STEP_SUMMARY || echo "Kunde inte hämta paketlista" >> $GITHUB_STEP_SUMMARY
+          
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
-          # Skriv också till vanlig logg
-          echo "=== Final Docker image size ==="
-          docker images --format "table {{.Repository}}:{{.Tag}}\t{{.Size}}\t{{.ID}}" | grep -E "${{ github.repository }}" || true
+          echo "✅ Summary skapad" 
