@@ -1,7 +1,7 @@
 name: Create and publish alpine image
 
 on:
-  workflow_dispatch:          # Fortfarande manuell trigger
+  workflow_dispatch:
     inputs:
       alpine_version:
         description: 'Alpine version (lämna tomt för att använda branch-namn)'
@@ -62,3 +62,29 @@ jobs:
             ALPINE_VERSION=${{ steps.version.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      # === Bildstorlek + GitHub Summary ===
+      - name: Show built image size + Summary
+        run: |
+          echo "## 🐳 Docker Image Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Alpine Version:** \`${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** \`${{ env.REGISTRY }}/${{ github.repository }}:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "### 📏 Image Size" >> $GITHUB_STEP_SUMMARY
+          
+          # Visa lokal storlek
+          SIZE=$(docker images --format "{{.Size}}" ${{ env.REGISTRY }}/${{ github.repository }}:${{ steps.version.outputs.version }} 2>/dev/null || echo "N/A")
+          echo "- **Size (uncompressed):** ${SIZE}" >> $GITHUB_STEP_SUMMARY
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Installed packages in rootfs" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          docker run --rm ${{ env.REGISTRY }}/${{ github.repository }}:${{ steps.version.outputs.version }} \
+            apk info -v 2>/dev/null | head -n 30 >> $GITHUB_STEP_SUMMARY || echo "Could not list packages" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+          # Visa också i loggen
+          echo "=== Final Docker image size ==="
+          docker images --format "table {{.Repository}}:{{.Tag}}\t{{.Size}}\t{{.ID}}" | grep -E "(secure_and_minimal|${{ github.repository }})" || true
