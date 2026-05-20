@@ -1,11 +1,12 @@
 name: Create and publish alpine image
 
 on:
-  workflow_dispatch:          # Fortfarande manuell trigger
+  workflow_dispatch:
     inputs:
       alpine_version:
-        description: 'Alpine version (lämna tomt för att använda branch-namn)'
+        description: 'Alpine version to build (e.g. 3.23)'
         required: false
+        default: '3.23'
 
 env:
   REGISTRY: ghcr.io
@@ -29,12 +30,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set Alpine version
+      - name: Determine Alpine version
         id: version
         run: |
           VERSION=${{ inputs.alpine_version || github.ref_name }}
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "Building Alpine version: ${VERSION}"
+          echo "Building Alpine ${VERSION}"
 
       - name: Extract metadata (tags, labels)
         id: meta
@@ -51,7 +52,7 @@ jobs:
           driver-opts: |
             image=moby/buildkit:v0.30.0
 
-      - name: Build and push
+      - name: Build and push Docker image
         uses: docker/build-push-action@v7
         with:
           context: ./${{ env.CONTEXT }}
@@ -62,3 +63,4 @@ jobs:
             ALPINE_VERSION=${{ steps.version.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          # platforms: linux/amd64,linux/arm64   # Avkommentera för multi-arch stöd
