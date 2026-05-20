@@ -73,18 +73,25 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
 
           echo "### 📏 Image Size" >> $GITHUB_STEP_SUMMARY
-          
-          # Visa lokal storlek
-          SIZE=$(docker images --format "{{.Size}}" ${{ env.REGISTRY }}/${{ github.repository }}:${{ steps.version.outputs.version }} 2>/dev/null || echo "N/A")
+
+          IMAGE_NAME="${{ env.REGISTRY }}/${{ github.repository }}:${{ steps.version.outputs.version }}"
+
+          # Försök hämta storlek (funkar bättre efter Buildx)
+          SIZE=$(docker images --format "{{.Size}}" "$IMAGE_NAME" 2>/dev/null || echo "N/A")
           echo "- **Size (uncompressed):** ${SIZE}" >> $GITHUB_STEP_SUMMARY
-          
+
+          # Extra info från docker inspect
+          echo "- **Digest:** $(docker inspect --format='{{index .RepoDigests 0}}' "$IMAGE_NAME" 2>/dev/null | cut -d@ -f2 || echo 'N/A')" >> $GITHUB_STEP_SUMMARY
+
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📦 Installed packages in rootfs" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          docker run --rm ${{ env.REGISTRY }}/${{ github.repository }}:${{ steps.version.outputs.version }} \
-            apk info -v 2>/dev/null | head -n 30 >> $GITHUB_STEP_SUMMARY || echo "Could not list packages" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Installed packages" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          
+          # Kör paketlistan via docker run (mer pålitligt)
+          docker run --rm "$IMAGE_NAME" apk info -v 2>/dev/null | head -n 40 >> $GITHUB_STEP_SUMMARY || echo "Kunde inte lista paket" >> $GITHUB_STEP_SUMMARY
+          
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
-          # Visa också i loggen
+          # Skriv även till loggen
           echo "=== Final Docker image size ==="
-          docker images --format "table {{.Repository}}:{{.Tag}}\t{{.Size}}\t{{.ID}}" | grep -E "(secure_and_minimal|${{ github.repository }})" || true
+          docker images --format "table {{.Repository}}:{{.Tag}}\t{{.Size}}\t{{.ID}}" | grep -E "(${{ github.repository }}|secure_and_minimal)" || true
