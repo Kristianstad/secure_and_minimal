@@ -19,7 +19,7 @@ RUN exec 2>&1 \
  && rm -rf /finalfs/var/cache/apk/* /finalfs/etc/apk/cache/* 2>/dev/null || true \
  && echo "=== Verifying minimal installation (alpine-base only) ===" \
  && echo "Installed packages with versions:" \
- && apk --root /finalfs info -v \
+ && apk --root /finalfs --no-cache info -v \
  && echo "=== Rootfs size ===" \
  && du -sh /finalfs
 
@@ -35,7 +35,7 @@ RUN exec 2>&1 \
 #  && rm -rf /finalfs/var/cache/apk/* /finalfs/etc/apk/cache/* 2>/dev/null || true \
 #  && echo "=== Verifying minimal installation (alpine-base only) ===" \
 #  && echo "Installed packages with versions:" \
-#  && apk --root /finalfs info -v \
+#  && apk --root /finalfs --no-cache info -v \
 #  && echo "=== Rootfs size ===" \
 #  && du -sh /finalfs
 
