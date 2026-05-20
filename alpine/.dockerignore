@@ -1,0 +1,17 @@
+# Version control
+.git
+.gitignore
+
+# Editor / OS files
+.vscode
+.idea
+*.swp
+.DS_Store
+
+# Documentation
+README.md
+LICENSE
+
+# Temporary / build files
+*.log
+*.tmp
