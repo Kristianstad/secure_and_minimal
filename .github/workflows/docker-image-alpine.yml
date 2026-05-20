@@ -56,6 +56,7 @@ jobs:
         with:
           context: ./${{ env.CONTEXT }}
           push: true
+          load: true                  # <-- VIKTIGT NYTT
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
@@ -76,22 +77,18 @@ jobs:
 
           IMAGE_NAME="${{ env.REGISTRY }}/${{ github.repository }}:${{ steps.version.outputs.version }}"
 
-          # Försök hämta storlek (funkar bättre efter Buildx)
+          # Hämta storlek
           SIZE=$(docker images --format "{{.Size}}" "$IMAGE_NAME" 2>/dev/null || echo "N/A")
           echo "- **Size (uncompressed):** ${SIZE}" >> $GITHUB_STEP_SUMMARY
 
-          # Extra info från docker inspect
           echo "- **Digest:** $(docker inspect --format='{{index .RepoDigests 0}}' "$IMAGE_NAME" 2>/dev/null | cut -d@ -f2 || echo 'N/A')" >> $GITHUB_STEP_SUMMARY
 
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📦 Installed packages" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
-          
-          # Kör paketlistan via docker run (mer pålitligt)
-          docker run --rm "$IMAGE_NAME" apk info -v 2>/dev/null | head -n 40 >> $GITHUB_STEP_SUMMARY || echo "Kunde inte lista paket" >> $GITHUB_STEP_SUMMARY
-          
+          docker run --rm "$IMAGE_NAME" apk info -v 2>/dev/null | head -n 35 >> $GITHUB_STEP_SUMMARY || echo "Kunde inte lista paket" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
-          # Skriv även till loggen
+          # Skriv också till vanlig logg
           echo "=== Final Docker image size ==="
-          docker images --format "table {{.Repository}}:{{.Tag}}\t{{.Size}}\t{{.ID}}" | grep -E "(${{ github.repository }}|secure_and_minimal)" || true
+          docker images --format "table {{.Repository}}:{{.Tag}}\t{{.Size}}\t{{.ID}}" | grep -E "${{ github.repository }}" || true
