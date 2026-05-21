@@ -42,11 +42,13 @@ RUN exec 2>&1 \
  && cd /finalfs \
  && (/finalfs/bin/busybox find . -type l ! -path './tmp/*' ! -path './var/cache/*' -exec /finalfs/bin/busybox sh -c 'echo -n "$(echo "{}" | /finalfs/bin/busybox cut -c 2-)>"' \; -exec /finalfs/bin/busybox readlink "{}" \; && /finalfs/bin/busybox find . -type f ! -path './tmp/*' ! -path './var/cache/*' -exec /finalfs/bin/busybox md5sum "{}" \; | /finalfs/bin/busybox awk '{first=$1; $1=""; print $0">"first}' | /finalfs/bin/busybox sed 's|^ [.]||') | /finalfs/bin/busybox sort -u - > /tmp/onbuild/exclude.filelist \
  && /finalfs/bin/busybox tar -c -z -f /finalfs/environment/onbuild.tar.gz -C /tmp onbuild \
- && echo '.' \
  && echo '**************** Image contents ****************' \
  && /finalfs/bin/busybox chroot /finalfs /bin/busybox ls -laR / \
  && echo '************************************************' \
- && echo '.'
+ && echo "Installed packages with versions:" \
+ && apk --root /finalfs --no-cache info -v \
+ && echo "=== Rootfs size ===" \
+ && du -sh /finalfs
 
 FROM scratch AS image
 
