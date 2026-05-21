@@ -16,6 +16,7 @@ RUN exec 2>&1 \
 # =========================================================================
 # ONBUILD - Executed/available when building the main Docker image
 # =========================================================================
+
     # ---------------------------------------------------------------------
     # ARG - Set in main Docker image
     # ---------------------------------------------------------------------
@@ -94,21 +95,91 @@ RUN exec 2>&1 \
     # ENV
     # ---------------------------------------------------------------------
         ONBUILD ENV HUBPROFILE="${HUBPROFILE}"
-        # ... (resten av ENV-blocket behålls oförändrat)
+        ONBUILD ENV HUBREPO="${HUBREPO}"
+        ONBUILD ENV HUBVERSION="${HUBVERSION}"
+        ONBUILD ENV IMAGEID="${IMAGEID:-${HUBPROFILE:+$HUBPROFILE-}${HUBREPO:+$HUBREPO-}${HUBVERSION:+$HUBVERSION}}"
+        ONBUILD ENV IMAGETYPE="${IMAGETYPE:-application}"
+        ONBUILD ENV BUILDDIR="${BUILDDIR:-/builddir}"
+        ONBUILD ENV CONTENTIMAGE1="$CONTENTIMAGE1"
+        ONBUILD ENV CONTENTSOURCE1="${CONTENTSOURCE1:-/}"
+        ONBUILD ENV CONTENTDESTINATION1="${CONTENTDESTINATION1:-$BUILDDIR}"
+        ONBUILD ENV CONTENTIMAGE2="$CONTENTIMAGE2"
+        ONBUILD ENV CONTENTSOURCE2="${CONTENTSOURCE2:-/}"
+        ONBUILD ENV CONTENTDESTINATION2="${CONTENTDESTINATION2:-$BUILDDIR}"
+        ONBUILD ENV CONTENTIMAGE3="$CONTENTIMAGE3"
+        ONBUILD ENV CONTENTSOURCE3="${CONTENTSOURCE3:-/}"
+        ONBUILD ENV CONTENTDESTINATION3="${CONTENTDESTINATION3:-$BUILDDIR}"
+        ONBUILD ENV CONTENTIMAGE4="$CONTENTIMAGE4"
+        ONBUILD ENV CONTENTSOURCE4="${CONTENTSOURCE4:-/}"
+        ONBUILD ENV CONTENTDESTINATION4="${CONTENTDESTINATION4:-$BUILDDIR}"
+        ONBUILD ENV CONTENTIMAGE5="$CONTENTIMAGE5"
+        ONBUILD ENV CONTENTSOURCE5="${CONTENTSOURCE5:-/}"
+        ONBUILD ENV CONTENTDESTINATION5="${CONTENTDESTINATION5:-$BUILDDIR}"
+        ONBUILD ENV ADDREPOS="${ADDREPOS}"
+        ONBUILD ENV RUNDEPS="${RUNDEPS}"
+        ONBUILD ENV RUNDEPS_UNTRUSTED="${RUNDEPS_UNTRUSTED}"
+        ONBUILD ENV EXCLUDEAPKS="${EXCLUDEAPKS}"
+        ONBUILD ENV EXCLUDEDEPS="${EXCLUDEDEPS}"
+        ONBUILD ENV MAKEDIRS="${MAKEDIRS}"
+        ONBUILD ENV MAKEFILES="${MAKEFILES}"
+        ONBUILD ENV CLONEGITS="${CLONEGITS}"
+        ONBUILD ENV CLONEGITSDIR="${CLONEGITSDIR:-$BUILDDIR}"
+        ONBUILD ENV DOWNLOADS="${DOWNLOADS}"
+        ONBUILD ENV DOWNLOADSDIR="${DOWNLOADSDIR:-$BUILDDIR}"
+        ONBUILD ENV BUILDDEPS="${BUILDDEPS}"
+        ONBUILD ENV BUILDDEPS_UNTRUSTED="${BUILDDEPS_UNTRUSTED}"
+        ONBUILD ENV DESTDIR="${DESTDIR}"
+        ONBUILD ENV FORCE_UNSAFE_CONFIGURE="1"
+        ONBUILD ENV LANG="${LANG:-C.UTF-8}"
+        ONBUILD ENV CHARSET="${CHARSET:-UTF-8}"
+        ONBUILD ENV MPICC="${MPICC:-/usr/bin/mpicc}"
+        ONBUILD ENV MPICXX="${MPICXX:-/usr/bin/mpicxx}"
+        ONBUILD ENV CC="${CC}"
+        ONBUILD ENV JAVA_HOME="${JAVA_HOME}"
+        ONBUILD ENV JRE_HOME="${JRE_HOME}"
+        ONBUILD ENV ADDTO_CFLAGS="${ADDTO_CFLAGS}"
+        ONBUILD ENV CFLAGS="${CFLAGS:--O2 -fomit-frame-pointer -fno-reorder-blocks -fno-reorder-functions -mcmodel=large ${ADDTO_CFLAGS}}"
+        ONBUILD ENV ADDTO_PATH="${ADDTO_PATH}"
+        ONBUILD ENV PATH="${ADDTO_PATH}${ADDTO_PATH:+:}${PATH:-/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin::}"
+        ONBUILD ENV ADDTO_CPATH="${ADDTO_CPATH}"
+        ONBUILD ENV CPATH="${ADDTO_CPATH}${ADDTO_CPATH:+:}$CPATH"
+        ONBUILD ENV ADDTO_LIBRARY_PATH="${ADDTO_LIBRARY_PATH}"
+        ONBUILD ENV LIBRARY_PATH="${ADDTO_LIBRARY_PATH}${ADTO_LIBRARY_PATH:+:}$LIBRARY_PATH"
+        ONBUILD ENV ADDTO_LD_LIBRARY_PATH="${ADDTO_LD_LIBRARY_PATH}"
+        ONBUILD ENV LD_LIBRARY_PATH="${ADDTO_LD_LIBRARY_PATH}${ADDTO_LD_LIBRARY_PATH:+:}${LD_LIBRARY_PATH:-${LIBRARY_PATH}}"
+        ONBUILD ENV COMMON_CONFIGUREPREFIX="${COMMON_CONFIGUREPREFIX:-/usr}"
+        ONBUILD ENV COMMON_CONFIGURECMD="${COMMON_CONFIGURECMD:-./configure --prefix=${COMMON_CONFIGUREPREFIX}}"
+        ONBUILD ENV COMMON_CMAKECMD="${COMMON_CMAKECMD:-cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=/usr/lib -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_C_FLAGS=\"${CFLAGS}\"}"
+        ONBUILD ENV COMMON_MAKECMDS="${COMMON_MAKECMDS:-make -s && make -s install}"
+        ONBUILD ENV COMMON_INSTALLSRC="${COMMON_INSTALLSRC:-$COMMON_CONFIGURECMD && $COMMON_MAKECMDS}"
+        ONBUILD ENV EXECUTABLES="${EXECUTABLES}"
+        ONBUILD ENV STARTUPEXECUTABLES="${STARTUPEXECUTABLES}"
+        ONBUILD ENV EXPOSEFUNCTIONS="${EXPOSEFUNCTIONS}"
+        ONBUILD ENV GID0WRITABLES="${GID0WRITABLES}"
+        ONBUILD ENV GID0WRITABLESRECURSIVE="${GID0WRITABLESRECURSIVE}"
+        ONBUILD ENV LINUXUSEROWNED="${LINUXUSEROWNED}"
+        ONBUILD ENV LINUXUSEROWNEDRECURSIVE="${LINUXUSEROWNEDRECURSIVE}"
+        ONBUILD ENV REMOVEDIRS="${REMOVEDIRS}"
+        ONBUILD ENV REMOVEFILES="${REMOVEFILES}"
+        ONBUILD ENV INITCMDS="${INITCMDS}"
+        ONBUILD ENV BUILDCMDS="${BUILDCMDS}"
+        ONBUILD ENV KEEPEMPTYDIRS="${KEEPEMPTYDIRS:-no}"
         ONBUILD ENV FINALCMDS="${FINALCMDS}"
 
     # ---------------------------------------------------------------------
-    # COPY & RUN (ONBUILD)
+    # COPY
     # ---------------------------------------------------------------------
         ONBUILD COPY --from=base / /finalfs/
         ONBUILD COPY --from=init / /tmp/initfs/
         ONBUILD COPY --from=content1 "$CONTENTSOURCE1" "$CONTENTDESTINATION1"
-        # ... (övriga COPY-rader behålls)
-
+        ONBUILD COPY --from=content2 "$CONTENTSOURCE2" "$CONTENTDESTINATION2"
+        ONBUILD COPY --from=content3 "$CONTENTSOURCE3" "$CONTENTDESTINATION3"
+        ONBUILD COPY --from=content4 "$CONTENTSOURCE4" "$CONTENTDESTINATION4"
+        ONBUILD COPY --from=content5 "$CONTENTSOURCE5" "$CONTENTDESTINATION5"
         ONBUILD COPY ./ /tmp/
 
+    # ---------------------------------------------------------------------
+    # RUN
+    # ---------------------------------------------------------------------
         ONBUILD RUN /usr/sbin/onbuildrun.sh || ( echo "BUILD FAILED!" && touch "/fail" )
         ONBUILD RUN cat /build.log && [ ! -e "/fail" ]
-
-# Final stage
-FROM image
