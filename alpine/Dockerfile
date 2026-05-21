@@ -2,9 +2,6 @@ ARG ALPINE_VERSION=${ALPINE_VERSION:-3.23}
 
 FROM alpine:${ALPINE_VERSION} AS alpine
 
-# =============================================
-# Alternativ 1: Rekommenderad (mer robust)
-# =============================================
 RUN exec 2>&1 \
  && set -x \
  && echo "alpine-base" > /etc/apk/world \
