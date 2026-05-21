@@ -44,9 +44,7 @@ RUN exec 2>&1 \
  && /finalfs/bin/busybox tar -c -z -f /finalfs/environment/onbuild.tar.gz -C /tmp onbuild \
  && echo '**************** Image contents ****************' \
  && /finalfs/bin/busybox chroot /finalfs /bin/busybox ls -laR / \
- && echo '************************************************' \
- && echo "=== Rootfs size ===" \
- && du -sh /finalfs
+ && echo '************************************************'
 
 FROM scratch AS image
 
