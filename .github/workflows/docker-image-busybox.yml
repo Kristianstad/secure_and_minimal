@@ -1,6 +1,12 @@
 name: Create and publish busybox image
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      alpine_version:
+        description: 'Alpine version to base on (e.g. 3.23)'
+        required: false
+        default: ''
 
 env:
   REGISTRY: ghcr.io
@@ -15,41 +21,53 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref }}
+        uses: actions/checkout@v6
 
       - name: Log in to the Container registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ github.repository }}
+      - name: Lowercase repository owner
+        id: lowercase
+        run: |
+          OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "owner_lc=${OWNER_LC}" >> $GITHUB_OUTPUT
+          echo "Using lowercase owner: ${OWNER_LC}"
 
-      - name: Change case of repo name
-        id: repo
-        uses: ASzc/change-string-case-action@v6
+      - name: Determine Alpine version
+        id: version
+        run: |
+          VERSION=${{ inputs.alpine_version || github.ref_name }}
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Building busybox image based on Alpine ${VERSION}"
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v6
         with:
-          string: ${{ github.repository }}
+          images: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.owner_lc }}/secure_and_minimal
+          tags: |
+            type=raw,value=${{ steps.version.outputs.version }}
+            type=raw,value=latest,enable={{ is_default_branch }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
         with:
-          driver-opts: image=moby/buildkit:v0.12.5
+          driver-opts: |
+            image=moby/buildkit:v0.30.0
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: ./${{ env.CONTEXT }}
           push: true
-          tags: ${{ env.REGISTRY }}/${{ steps.repo.outputs.lowercase }}:${{ env.CONTEXT }}-${{ github.ref_name }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            SaM_REPO=${{ env.REGISTRY }}/${{ steps.repo.outputs.lowercase }}
-            ALPINE_VERSION=${{ github.ref_name }}
+            SaM_REPO=${{ env.REGISTRY }}/${{ steps.lowercase.outputs.owner_lc }}/secure_and_minimal
+            ALPINE_VERSION=${{ steps.version.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
