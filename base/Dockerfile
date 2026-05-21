@@ -58,6 +58,7 @@ COPY --from=build /finalfs /
 # RUNs and ENVs <BEGIN>
 RUN chgrp -R 101 /usr/lib/sudo /usr/local/bin/sudo \
  && chmod u+s /usr/local/bin/sudo
+
 ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/start" \
     VAR_LINUX_USER="root" \
     VAR_FINAL_COMMAND="pause" \
