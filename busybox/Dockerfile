@@ -48,7 +48,7 @@ RUN exec 2>&1 \
 
 FROM scratch AS image
 
-# Re-deklarera ARG för att undvika varningar i senare stage
+# Re-declare ARGs
 ARG ALPINE_VERSION
 ARG SaM_REPO
 
