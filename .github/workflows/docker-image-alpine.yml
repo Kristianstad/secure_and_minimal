@@ -30,18 +30,24 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Lowercase repository owner
+        id: lowercase
+        run: |
+          OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "owner_lc=${OWNER_LC}" >> $GITHUB_OUTPUT
+
       - name: Determine Alpine version
         id: version
         run: |
           VERSION=${{ inputs.alpine_version || github.ref_name }}
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "Building Alpine ${VERSION}"
+          echo "Building Alpine version: ${VERSION}"
 
       - name: Extract metadata (tags, labels)
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ${{ env.REGISTRY }}/${{ github.repository }}
+          images: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.owner_lc }}/secure_and_minimal
           tags: |
             type=raw,value=${{ steps.version.outputs.version }}
             type=raw,value=latest,enable={{ is_default_branch }}
@@ -63,4 +69,3 @@ jobs:
             ALPINE_VERSION=${{ steps.version.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          # platforms: linux/amd64,linux/arm64   # Avkommentera för multi-arch stöd
