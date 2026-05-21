@@ -21,7 +21,7 @@ RUN exec 2>&1 \
 
 FROM scratch
 
-# Re-deklarera ARG för att undvika varningar
+# Re-declare ARGs
 ARG ALPINE_VERSION
 
 # Metadata
