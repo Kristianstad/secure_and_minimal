@@ -6,7 +6,7 @@ on:
       alpine_version:
         description: 'Alpine version to build (e.g. 3.23)'
         required: false
-        default: '3.23'
+        default: ''
 
 env:
   REGISTRY: ghcr.io
