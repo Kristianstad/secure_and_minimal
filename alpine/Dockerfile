@@ -23,25 +23,9 @@ RUN exec 2>&1 \
  && echo "=== Rootfs size ===" \
  && du -sh /finalfs
 
-# =============================================
-# Alternativ 2: Modern & kort
-# =============================================
-# RUN apk add --no-cache --initdb alpine-base \
-#  && mkdir -p /finalfs/etc/apk \
-#  && cp -a /etc/resolv.conf /finalfs/etc/ \
-#  && cp -a /etc/apk/repositories /finalfs/etc/apk/ \
-#  && cp -a /etc/apk/keys /finalfs/etc/apk/ \
-#  && apk --no-cache --root /finalfs --keys-dir /etc/apk/keys --initdb add alpine-base \
-#  && rm -rf /finalfs/var/cache/apk/* /finalfs/etc/apk/cache/* 2>/dev/null || true \
-#  && echo "=== Verifying minimal installation (alpine-base only) ===" \
-#  && echo "Installed packages with versions:" \
-#  && apk --root /finalfs --no-cache info -v \
-#  && echo "=== Rootfs size ===" \
-#  && du -sh /finalfs
-
 FROM scratch
 
-# Re-deklarera ARG så den blir tillgänglig i detta stage
+# Re-deklarera ARG för att undvika varningar
 ARG ALPINE_VERSION
 
 # Metadata
