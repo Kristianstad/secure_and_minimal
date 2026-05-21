@@ -11,7 +11,7 @@ RUN exec 2>&1 \
  && mkdir -p /excludefs /finalfs \
  && apk --no-cache --initramfs-diskless-boot --clean-protected add \
       acl bash build-base libtool cmake automake autoconf linux-headers git libcurl \
- && apk info
+ && apk --no-cache info
 
 # =========================================================================
 # ONBUILD - Executed/available when building the main Docker image
