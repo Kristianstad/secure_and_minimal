@@ -1,7 +1,7 @@
 ARG SaM_REPO=${SaM_REPO:-ghcr.io/kristianstad/secure_and_minimal}
 ARG ALPINE_VERSION=${ALPINE_VERSION:-3.23}
 
-FROM $SaM_REPO:alpine-$ALPINE_VERSION as alpine
+FROM ${SaM_REPO}:alpine-${ALPINE_VERSION} AS alpine
 
 RUN exec 2>&1 \
  && set -x \
@@ -48,6 +48,19 @@ RUN exec 2>&1 \
  && echo '************************************************' \
  && echo '.'
 
-FROM scratch as image
+FROM scratch AS image
+
+# Re-deklarera ARG för att undvika varningar i senare stage
+ARG ALPINE_VERSION
+ARG SaM_REPO
+
+LABEL org.opencontainers.image.title="secure_and_minimal-busybox" \
+      org.opencontainers.image.description="Ultra-minimal busybox image based on secure_and_minimal alpine" \
+      org.opencontainers.image.version="${ALPINE_VERSION}" \
+      org.opencontainers.image.source="https://github.com/Kristianstad/secure_and_minimal" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.vendor="Kristianstad" \
+      org.opencontainers.image.authors="Kristianstad" \
+      org.opencontainers.image.base.name="${SaM_REPO}:alpine-${ALPINE_VERSION}"
 
 COPY --from=alpine /finalfs /
