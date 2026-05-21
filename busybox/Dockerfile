@@ -45,8 +45,6 @@ RUN exec 2>&1 \
  && echo '**************** Image contents ****************' \
  && /finalfs/bin/busybox chroot /finalfs /bin/busybox ls -laR / \
  && echo '************************************************' \
- && echo "Installed packages with versions:" \
- && apk --root /finalfs --no-cache info -v \
  && echo "=== Rootfs size ===" \
  && du -sh /finalfs
 
