@@ -17,7 +17,6 @@ RUN exec 2>&1 \
  && apk --no-cache --root /finalfs --keys-dir /etc/apk/keys \
       --initramfs-diskless-boot --clean-protected add --initdb alpine-base \
  && rm -rf /finalfs/var/cache/apk/* /finalfs/etc/apk/cache/* 2>/dev/null || true \
- && echo "=== Verifying minimal installation (alpine-base only) ===" \
  && echo "Installed packages with versions:" \
  && apk --root /finalfs --no-cache info -v \
  && echo "=== Rootfs size ===" \
