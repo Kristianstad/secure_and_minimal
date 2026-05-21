@@ -19,9 +19,6 @@ jobs:
       contents: read
       packages: write
 
-    env:
-      ALPINE_VERSION: ${{ github.event.inputs.alpine_version != '' && github.event.inputs.alpine_version || github.ref_name }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -39,13 +36,20 @@ jobs:
           OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           echo "owner_lc=${OWNER_LC}" >> $GITHUB_OUTPUT
 
+      - name: Determine Alpine version
+        id: version
+        run: |
+          VERSION=${{ inputs.alpine_version || github.ref_name }}
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Building Alpine version: ${VERSION}"
+
       - name: Extract metadata (tags, labels)
         id: meta
         uses: docker/metadata-action@v6
         with:
           images: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.owner_lc }}/secure_and_minimal
           tags: |
-            type=raw,value=${{ env.ALPINE_VERSION }}
+            type=raw,value=${{ steps.version.outputs.version }}
             type=raw,value=latest,enable={{ is_default_branch }}
 
       - name: Set up Docker Buildx
@@ -62,6 +66,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ALPINE_VERSION=${{ env.ALPINE_VERSION }}
+            ALPINE_VERSION=${{ steps.version.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
