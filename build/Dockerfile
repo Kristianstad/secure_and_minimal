@@ -11,6 +11,7 @@ RUN exec 2>&1 \
  && mkdir -p /excludefs /finalfs \
  && apk --no-cache --initramfs-diskless-boot --clean-protected add \
       acl bash build-base libtool cmake automake autoconf linux-headers git libcurl \
+ && echo "Installed packages with versions:" \
  && apk --no-cache info -v
 
 # =========================================================================
