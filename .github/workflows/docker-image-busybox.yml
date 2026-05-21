@@ -49,7 +49,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.owner_lc }}/secure_and_minimal
           tags: |
-            type=raw,value=${{ steps.version.outputs.version }}
+            type=raw,value=busybox-${{ steps.version.outputs.version }}
             type=raw,value=latest,enable={{ is_default_branch }}
 
       - name: Set up Docker Buildx
