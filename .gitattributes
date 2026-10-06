@@ -1,0 +1,6 @@
+# Text files always use LF, even in the working directory on Windows. The startup scripts run on Alpine.
+* text=auto eol=lf
+
+*.pdf binary
+*.pptx binary
+*.png binary
