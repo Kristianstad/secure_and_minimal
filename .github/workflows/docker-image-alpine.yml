@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       alpine_version:
-        description: 'Alpine version to build (e.g. 3.23)'
+        description: 'Alpine version to build (e.g. 3.24)'
         required: false
         default: ''
 
